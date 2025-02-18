@@ -65,8 +65,9 @@ export default function FileUploadDropdown({ onFileSelect, isUploading }: FileUp
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
-        className="bg-black/50 backdrop-blur-md border-white/10 animate-in fade-in-80 zoom-in-95"
+        className="z-50 min-w-[8rem] bg-black/50 backdrop-blur-md border border-white/10 rounded-lg p-2 shadow-xl animate-in fade-in-80 zoom-in-95"
         align="end"
+        sideOffset={8}
       >
         {["script", "report"].map((type) => (
           <div key={type} className="relative">
@@ -80,12 +81,12 @@ export default function FileUploadDropdown({ onFileSelect, isUploading }: FileUp
             <DropdownMenuItem asChild>
               <label
                 htmlFor={`${type}-upload`}
-                className="relative cursor-pointer text-white/90 hover:text-white focus:text-white transition-colors"
+                className="relative flex w-full cursor-pointer items-center rounded-md px-2 py-1.5 text-sm text-white/90 hover:text-white hover:bg-white/10 focus:bg-white/10 transition-colors"
               >
                 <motion.div
                   whileHover={{ x: 5 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="flex items-center gap-2 py-1"
+                  className="flex items-center gap-2"
                 >
                   <Upload className="w-4 h-4" />
                   Upload {type === "script" ? "Movie Script" : "Report File"}
