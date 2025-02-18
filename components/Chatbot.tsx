@@ -6,6 +6,8 @@ import { Upload, Send, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bodoni_Moda } from "next/font/google";
 import axios from "axios";
+import FileUploadDropdown from "./FileUploadDropdown";
+import { SparklesCore } from "@/components/ui/sparkles";
 
 const bodoni = Bodoni_Moda({ subsets: ["latin"] });
 
@@ -16,7 +18,7 @@ type Message = {
 };
 
 type ChatbotProps = {
-  channel: "startups" | "investors";
+  channel: "reactors-report" | "readers-report";
 };
 
 export default function Chatbot({ channel }: ChatbotProps) {
@@ -123,23 +125,30 @@ export default function Chatbot({ channel }: ChatbotProps) {
     const uploadedFile = e.target.files?.[0];
     if (!uploadedFile) return;
 
-    if (!uploadedFile.name.endsWith(".csv")) {
-      alert("Please upload a CSV file");
+    if (!uploadedFile.name.endsWith(".txt")) {
+      alert("Please upload a text file");
       return;
     }
 
     setIsUploading(true);
     try {
+      const loadingMessage = {
+        id: Date.now().toString(),
+        role: "assistant" as const,
+        content: "Processing your file...",
+      };
+      setMessages(prev => [...prev, loadingMessage]);
+
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setFile(uploadedFile);
 
       const systemMessage = {
-        id: Date.now().toString(),
+        id: (Date.now() + 1).toString(),
         role: "assistant" as const,
-        content: `CSV file "${uploadedFile.name}" has been uploaded. You can now ask questions about its contents.`,
+        content: `File "${uploadedFile.name}" has been uploaded successfully! You can now ask questions about its contents.`,
       };
 
-      setMessages((prev) => [...prev, systemMessage]);
+      setMessages(prev => prev.filter(msg => msg.id !== loadingMessage.id).concat(systemMessage));
     } catch (error) {
       console.error("Error uploading file:", error);
       alert("Failed to upload file. Please try again.");
@@ -153,50 +162,95 @@ export default function Chatbot({ channel }: ChatbotProps) {
 
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col h-[calc(100vh-10rem)]">
-      <div className="flex-1 overflow-y-auto space-y-4 p-4 scroll-smooth">
-        <AnimatePresence initial={false}>
-          {messages.map((message) => (
-            <motion.div
-              key={message.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-            >
-              <div className={`rounded-2xl p-4 max-w-[70%] bg-black/20 border border-white/10`}>
-                <p className="text-white/90 whitespace-pre-line">{renderMessageContent(message.content)}</p>
-              </div>
-            </motion.div>
-          ))}
-          {isLoading && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex justify-start"
-            >
-              <div className="rounded-2xl p-4 max-w-[70%] bg-black/20 border border-white/10">
-                <Loader2 className="animate-spin w-6 h-6 text-white" />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        <div ref={messagesEndRef} />
-      </div>
+      {messages.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="flex-1 flex items-center justify-center p-4"
+        >
+          <div className="relative p-6">
+            <SparklesCore
+              background="transparent"
+              minSize={0.4}
+              maxSize={1}
+              particleDensity={100}
+              className="absolute inset-0"
+              particleColor="#fff"
+            />
+            <div className="relative z-10 text-center space-y-4">
+              <h1 className={`${bodoni.className} text-3xl text-white/90`}>
+                Welcome to {channel === "readers-report" ? "Reader's" : "Reactor's"} Report
+              </h1>
+              <p className="text-white/70">
+                Upload a text file to start analyzing your data
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      ) : (
+        <div className="flex-1 overflow-y-auto space-y-4 p-4 scroll-smooth">
+          <AnimatePresence initial={false}>
+            {messages.map((message) => (
+              <motion.div
+                key={message.id}
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ 
+                  duration: 0.4,
+                  type: "spring",
+                  stiffness: 100,
+                  damping: 15
+                }}
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+              >
+                <motion.div 
+                  className="relative"
+                  whileHover={{ scale: 1.01 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <SparklesCore
+                    background="transparent"
+                    minSize={0.2}
+                    maxSize={0.8}
+                    particleDensity={600}
+                    className="absolute w-full h-full"
+                    particleColor="#fff"
+                  />
+                  <div className={`rounded-2xl p-4 max-w-[70%] bg-black/20 border border-white/10 relative z-10`}>
+                    <p className="text-white/90 whitespace-pre-line">{renderMessageContent(message.content)}</p>
+                  </div>
+                </motion.div>
+              </motion.div>
+            ))}
+            {isLoading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="flex justify-start"
+              >
+                <div className="rounded-2xl p-4 max-w-[70%] bg-black/20 border border-white/10">
+                  <Loader2 className="animate-spin w-6 h-6 text-white" />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <div ref={messagesEndRef} />
+        </div>
+      )}
+
       <div className="p-4">
         <div className="relative flex items-center gap-2">
-          <input type="file" id="file-upload" accept=".csv" onChange={handleFileUpload} className="hidden" disabled={isUploading} />
-          <motion.label htmlFor="file-upload" className="cursor-pointer">
-            <Upload className="w-5 h-5 text-white/70" />
-          </motion.label>
+          <FileUploadDropdown onFileSelect={handleFileUpload} isUploading={isUploading} />
           <form onSubmit={handleSubmit} className="flex-1 flex gap-2">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
-              className="flex-1 text-white/90"
+              className="flex-1 text-white/90 "
               disabled={isLoading}
             />
             <motion.button type="submit" disabled={isLoading || !input.trim()} className="relative">

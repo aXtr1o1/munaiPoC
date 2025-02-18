@@ -18,28 +18,20 @@ export default function Navbar() {
               pathname === "/" ? "text-white bg-white/10 backdrop-blur-md" : "text-white/70 hover:text-white/90"
             )}
           >
-            StartUps
+Reader's Report
+</Link>
+<Link
+  href="/investors"
+  className={cn(
+    "relative text-lg transition-colors px-4 py-2 rounded-lg",
+    pathname === "/investors" ? "text-white bg-white/10 backdrop-blur-md" : "text-white/70 hover:text-white/90"
+  )}
+>
+  Reactor's Report
           </Link>
-          <Link
-            href="/investors"
-            className={cn(
-              "relative text-lg transition-colors px-4 py-2 rounded-lg",
-              pathname === "/investors" ? "text-white bg-white/10 backdrop-blur-md" : "text-white/70 hover:text-white/90"
-            )}
-          >
-            Investors
-          </Link>
-          {/* <Link
-            href="/contact"
-            className={cn(
-              "relative text-lg transition-colors px-4 py-2 rounded-lg",
-              pathname === "/contact" ? "text-white bg-white/10 backdrop-blur-md" : "text-white/70 hover:text-white/90"
-            )}
-          >
-            Contact
-          </Link> */}
         </div>
       </div>
     </nav>
   );
 }
+

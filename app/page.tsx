@@ -1,5 +1,5 @@
 import Chatbot from '@/components/Chatbot'
 
 export default function Home() {
-  return <Chatbot channel="startups" />
+  return <Chatbot channel="readers-report" />
 }
