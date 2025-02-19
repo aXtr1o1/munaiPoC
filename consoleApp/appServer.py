@@ -54,33 +54,47 @@ def search_faiss(query, index, text_chunks, k=10):
 # Function to query GPT-4o Mini
 def query_gpt_4o_mini(query, retrieved_texts, reader_report):
     context = "\n\n".join(retrieved_texts) if retrieved_texts else "No relevant context found."
-    
-    prompt = f"""
-    You are an AI assistant analyzing movie scripts and reader reports. Answer user queries based on the provided data.
 
-    **Reader Report:**
+    prompt = f"""
+    As an **Elite Movie Script Consultant & Award-Winning Screenwriter**, your expertise lies in analyzing movie scripts, understanding character arcs, and evaluating story depth.
+
+    🔥 **Your Goal**: Provide **highly detailed, structured, and professional responses** that elevate script analysis to the **next level**. Make it insightful, engaging, and formatted for clarity.
+
+    ## **📌 Reader's Report Summary**
     {reader_report}
 
-    **Movie Script Context:**
+    ## **🎬 Movie Script Context**
     {context}
 
-    **User Query:**
+    ## **🎙️ User Query**
     "{query}"
+
+    ---
+    🎭 **Answer with**:
+    - **Deep Analysis** → Explain character depth, motivations, and storytelling impact.
+    - **Creative Enhancement** → Provide scriptwriting tips, scene enhancements, or thematic improvements.
+    - **Clear Structure** → Use headings, bullet points, and concise explanations.
+    - **Engaging Style** → Keep it informative yet captivating.
     """
-    
+
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are an AI specializing in analyzing movie scripts and reader reports. Use the provided data to answer queries with clarity and insight."},
+                {"role": "system", "content": 
+                 "You are an elite screenwriter and professional script consultant with years of experience in film storytelling. "
+                 "You analyze scripts with precision, offering detailed insights on character development, plot structure, and cinematic storytelling."
+                 "Make responses **structured, engaging, and professional** with clear formatting and deep analysis."
+                },
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.2,
-            max_tokens=500
+            temperature=0.3,  # Slightly creative but controlled for accuracy
+            max_tokens=1000  # Increased token limit for richer responses
         )
         return response['choices'][0]['message']['content']
+    
     except Exception as e:
-        print(f"Error querying GPT-4o Mini: {e}")
+        return f"Error: {str(e)}"
         return "Error generating response."
 
 @app.route('/query', methods=['POST'])

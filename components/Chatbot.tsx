@@ -6,6 +6,7 @@ import { Send, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import FileUpload from "./FileUploadDropDown";
+import ReactMarkdown from "react-markdown";  // Import Markdown renderer
 
 type Message = {
   id: string;
@@ -31,7 +32,7 @@ export default function Chatbot() {
 
     setMessages((prev) => [
       ...prev,
-      { id: Date.now().toString(), role: "system", content: `📂 ${file.name} uploaded successfully.` },
+      { id: Date.now().toString(), role: "system", content: `📂 **${file.name}** uploaded successfully.` },
     ]);
   };
 
@@ -60,7 +61,7 @@ export default function Chatbot() {
       setMessages((prev) => [...prev, { id: Date.now().toString(), role: "assistant", content: response.data.result }]);
     } catch (error) {
       console.error("Error:", error);
-      setMessages((prev) => [...prev, { id: Date.now().toString(), role: "assistant", content: "Failed to get a response." }]);
+      setMessages((prev) => [...prev, { id: Date.now().toString(), role: "assistant", content: "⚠️ Failed to get a response." }]);
     } finally {
       setIsLoading(false);
     }
@@ -73,13 +74,20 @@ export default function Chatbot() {
         <FileUpload onFileSelect={handleFileUpload} fileType="readerReport" />
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.map((message) => (
           <motion.div key={message.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-            <div className={`p-3 rounded-lg max-w-[70%] 
+            
+            <div className={`p-3 rounded-lg max-w-[80%] leading-relaxed 
               ${message.role === "user" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"}`}>
-              {message.content}
+              
+              {message.role === "assistant" ? (
+                <ReactMarkdown className="prose prose-invert">{message.content}</ReactMarkdown>
+              ) : (
+                <span>{message.content}</span>
+              )}
+
             </div>
           </motion.div>
         ))}
