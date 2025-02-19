@@ -9,8 +9,8 @@ const dmSans = DM_Sans({ subsets: ["latin"] });
 const bodoni = Bodoni_Moda({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "StartUp Singam",
-  description: "Filter startup ideas and investors based on specific requirements",
+  title: "Munai webApp",
+  description: "Muani Servies Site",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
