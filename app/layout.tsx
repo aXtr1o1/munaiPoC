@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Image src="/aXtrLabsicon.png" alt="Company Logo" width={240} height={80} />
           </div>
           <div className="absolute top-12 right-8">
-            <Image src="/startupSingamicon.png" alt="Company Logo" width={120} height={40} />
+            <Image src="/munai.png" alt="Company Logo" width={120} height={40} />
           </div>
           <Navbar /> {/* Use Navbar component */}
           <main className="container mx-auto pt-24 px-4 min-h-screen">{children}</main>
