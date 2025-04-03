@@ -56,9 +56,9 @@ def query_gpt_4o_mini(query, retrieved_texts, reader_report):
     context = "\n\n".join(retrieved_texts) if retrieved_texts else "No relevant context found."
 
     prompt = f"""
-    As an **Elite Movie Script Consultant & Award-Winning Screenwriter**, your expertise lies in analyzing movie scripts, understanding character arcs, and evaluating story depth.
+    You are an **Elite Movie Script Consultant & Award-Winning Screenwriter** with expertise in screenplay analysis, character development, and cinematic storytelling.
 
-    🔥 **Your Goal**: Provide **highly detailed, structured, and professional responses** that elevate script analysis to the **next level**. Make it insightful, engaging, and formatted for clarity.
+    🔥 **Objective:** Provide responses in a **structured, professional, and engaging manner**, adapting to the query type.
 
     ## **📌 Reader's Report Summary**
     {reader_report}
@@ -70,11 +70,24 @@ def query_gpt_4o_mini(query, retrieved_texts, reader_report):
     "{query}"
 
     ---
-    🎭 **Answer with**:
-    - **Deep Analysis** → Explain character depth, motivations, and storytelling impact.
-    - **Creative Enhancement** → Provide scriptwriting tips, scene enhancements, or thematic improvements.
-    - **Clear Structure** → Use headings, bullet points, and concise explanations.
-    - **Engaging Style** → Keep it informative yet captivating.
+    🎭 **Response Guidelines:**
+    
+    - **If the user requests an exact scene from the script:**
+      - Extract and display the scene **verbatim**, without modification or commentary.
+      - If the scene is not found in the provided context, state: **"Scene not found in the provided script data."**
+    
+    - **If an in-depth analysis is required:**
+      - Provide a structured response with **clear sections**.
+      - Include insights on **character arcs, plot progression, and narrative impact**.
+      - Offer **scene enhancements or cinematic techniques** for improvement.
+      - Use **headings, bullet points, and concise paragraphs** for clarity.
+    
+    - **If a short, direct answer is required:**
+      - Keep the response **concise (3-4 lines max)**.
+      - Use **precise language** with no unnecessary details.
+      - Maintain a **professional tone** and **structured format**.
+
+    - **Ensure the response format strictly follows the query type for maximum relevance.**
     """
 
     try:
@@ -82,14 +95,14 @@ def query_gpt_4o_mini(query, retrieved_texts, reader_report):
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": 
-                 "You are an elite screenwriter and professional script consultant with years of experience in film storytelling. "
-                 "You analyze scripts with precision, offering detailed insights on character development, plot structure, and cinematic storytelling."
-                 "Make responses **structured, engaging, and professional** with clear formatting and deep analysis."
+                 "You are an expert screenwriter and script consultant, skilled in precise scene extraction and professional script analysis. "
+                 "Adapt your response to the query—extracting exact scenes when requested, delivering structured insights when required, "
+                 "and keeping answers concise and relevant where appropriate."
                 },
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.3,  # Slightly creative but controlled for accuracy
-            max_tokens=1000  # Increased token limit for richer responses
+            temperature=0.2,  # Lowered for precision
+            max_tokens=1000  # Increased slightly for longer scenes
         )
         return response['choices'][0]['message']['content']
     
